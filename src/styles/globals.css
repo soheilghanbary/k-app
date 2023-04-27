@@ -1,0 +1,72 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: 'irsans';
+  font-weight: 300;
+  src: url('/fonts/IRANSansWebFaNum_Light.woff2');
+}
+@font-face {
+  font-family: 'irsans';
+  font-weight: 400;
+  src: url('/fonts/IRANSansWebFaNum.woff2');
+}
+@font-face {
+  font-family: 'irsans';
+  font-weight: 500;
+  src: url('/fonts/IRANSansWebFaNum_Medium.woff2');
+}
+@font-face {
+  font-family: 'irsans';
+  font-weight: 600;
+  src: url('/fonts/IRANSansWebFaNum_Bold.woff2');
+}
+@font-face {
+  font-family: 'irsans';
+  font-weight: 900;
+  src: url('/fonts/IRANSansWebFaNum_Black.woff2');
+}
+
+@layer base {
+  :root {
+    --background-primary: #ffffff;
+    --background-secondary: #f1f5f9;
+
+    --foreground-primary: #475569;
+    --foreground-secondary: #0f172a;
+
+    --border: #e2e8f0;
+
+    --ring: #38bdf8;
+ 
+    --radius: 0.5rem;
+  }
+ 
+  .dark {
+    --background-primary: #020617;
+    --background-secondary: #1e293b;
+
+    --foreground-primary: #94a3b8;
+    --foreground-secondary: #e2e8f0;
+
+    --border: #1e293b;
+
+    --ring: #60a5fa;
+  }
+}
+ 
+@layer base {
+  * {
+    @apply border-border;
+    user-select: none;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    @apply bg-background-primary text-foreground-primary;
+    font-family: 'irsans';
+    direction: rtl;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}

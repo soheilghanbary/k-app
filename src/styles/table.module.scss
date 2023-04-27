@@ -1,0 +1,26 @@
+.container {
+    @apply my-8
+}
+.table {
+    @apply table-fixed w-full;
+
+    thead {
+        @apply bg-background-secondary;
+    }
+
+    tr > th {
+        @apply text-foreground-secondary font-semibold;
+    }
+
+    tr > th , td {
+        @apply text-center px-6 py-2 text-base border;
+    }
+}
+
+.row-package > td {
+    @apply h-[40px];
+}
+
+.add {
+    @apply mt-4 flex items-center rounded-lg border bg-background-secondary px-3 py-2 text-sm duration-150 active:scale-90;
+}
