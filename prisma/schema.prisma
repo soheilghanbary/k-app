@@ -1,17 +1,21 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-    provider = "sqlite"
-    url      = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
-model Example {
-    id        String   @id @default(cuid())
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+model Device {
+  id       String   @id @default(uuid())
+  name     String?  @default("")
+  type     String?  @default("")
+  serial   String
+  phone    String?  @default("")
+  address  String?  @default("")
+  expert   String?  @default("")
+  seller   String?  @default("")
+  date     DateTime @default(now())
+  packages Json[]
 }

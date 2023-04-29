@@ -1,10 +1,4 @@
-# Task 1
-
-- components:
-  - navbar
-  - sidebar
-  - layout
-- pages
-  - dashboard
-  - single page (serial number)
-  - projects
+# New Tasks
+- create postgres Database
+- add tRPC methods
+- refactor code

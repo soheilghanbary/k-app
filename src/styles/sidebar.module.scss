@@ -1,0 +1,11 @@
+.sidebar {
+    @apply h-[90vh] w-64;
+}
+
+.body {
+    @apply flex flex-col gap-1;
+}
+
+.item {
+    @apply cursor-pointer rounded-lg p-2 pr-3 font-medium transition-[padding] duration-200 hover:bg-background-secondary hover:pr-5 hover:text-foreground-secondary;
+}

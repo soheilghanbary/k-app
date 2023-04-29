@@ -5,13 +5,17 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "~/components/ui/accordion";
-import { PlusIcon } from 'lucide-react'
+import { PlusIcon } from "lucide-react";
 import { Input } from "./ui/input";
+import styles from "~/styles/sidebar.module.scss";
+import { useState } from "react";
+import { api } from "~/utils/api";
+import { useRouter } from "next/router";
 
 export default function Sidebar() {
   return (
-    <div className="h-[90vh] w-64">
-      <ul className="flex flex-col gap-1">
+    <div className={styles.sidebar}>
+      <ul className={styles.body}>
         <Search />
         <Item />
       </ul>
@@ -20,14 +24,35 @@ export default function Sidebar() {
 }
 
 function Search() {
-  return (
-    <Input type="search" className="w-48 text-sm" placeholder="جستجو" />
-  )
+  return <Input type="search" className="w-48 text-sm" placeholder="جستجو" />;
 }
 
 function Item() {
+  const { data, isLoading } = api.device.all.useQuery();
+  const utils = api.useContext();
+  const [newDevice, setNewDevice] = useState({ show: false, serial: "" });
+  const router = useRouter();
+  const { mutateAsync } = api.device.create.useMutation({
+    onSuccess(data) {
+      setNewDevice({ show: false, serial: "" });
+      console.log(data);
+      utils.device.all.invalidate();
+    },
+  });
+
+  if (isLoading) return <p>loading...</p>;
+
+  async function onCreateDevice() {
+    await mutateAsync({ serial: newDevice.serial });
+  }
+
   return (
-    <Accordion type="single" collapsible className="text-sm w-48" defaultValue="item-1">
+    <Accordion
+      type="single"
+      collapsible
+      className="w-48 text-sm"
+      defaultValue="item-1"
+    >
       <AccordionItem value="item-1">
         <AccordionTrigger>
           <div className="flex items-center">
@@ -37,63 +62,39 @@ function Item() {
         </AccordionTrigger>
         <AccordionContent>
           <ul className="flex flex-col">
-            <li className="p-2 pr-3 hover:text-foreground-secondary hover:pr-5 duration-200 transition-[padding] font-medium hover:bg-background-secondary rounded-lg cursor-pointer">112340</li>
-            <li className="p-2 pr-3 hover:text-foreground-secondary hover:pr-5 duration-200 transition-[padding] font-medium hover:bg-background-secondary rounded-lg cursor-pointer">112340</li>
-            <li className="p-2 pr-3 hover:text-foreground-secondary hover:pr-5 duration-200 transition-[padding] font-medium hover:bg-background-secondary rounded-lg cursor-pointer">112340</li>
-            <li className="p-2 pr-3 hover:text-foreground-secondary hover:pr-5 duration-200 transition-[padding] font-medium hover:bg-background-secondary rounded-lg cursor-pointer">112340</li>
-            <li className="p-2 pr-3 hover:text-foreground-secondary hover:pr-5 duration-200 transition-[padding] font-medium hover:bg-background-secondary rounded-lg cursor-pointer">112340</li>
-            <button className="mt-4 hover:text-foreground-secondary active:scale-90 duration-150 flex justify-center items-center px-2 py-1 border bg-background-secondary rounded-lg"><PlusIcon className="w-4 h-4" /></button>
-          </ul>
-        </AccordionContent>
-      </AccordionItem>
-      <AccordionItem value="item-2">
-        <AccordionTrigger>
-          <div className="flex items-center">
-            <LayoutDashboard className="ml-4 h-4 w-4" />
-            اردیبهشت
-          </div>
-        </AccordionTrigger>
-        <AccordionContent>
-          <ul className="flex flex-col">
-            <li className="p-2 pr-3 hover:text-foreground-secondary hover:pr-5 duration-200 transition-[padding] font-medium hover:bg-background-secondary rounded-lg cursor-pointer">112340</li>
-            <li className="p-2 pr-3 hover:text-foreground-secondary hover:pr-5 duration-200 transition-[padding] font-medium hover:bg-background-secondary rounded-lg cursor-pointer">112340</li>
-            <li className="p-2 pr-3 hover:text-foreground-secondary hover:pr-5 duration-200 transition-[padding] font-medium hover:bg-background-secondary rounded-lg cursor-pointer">112340</li>
-            <li className="p-2 pr-3 hover:text-foreground-secondary hover:pr-5 duration-200 transition-[padding] font-medium hover:bg-background-secondary rounded-lg cursor-pointer">112340</li>
-            <li className="p-2 pr-3 hover:text-foreground-secondary hover:pr-5 duration-200 transition-[padding] font-medium hover:bg-background-secondary rounded-lg cursor-pointer">112340</li>
-          </ul>
-        </AccordionContent>
-      </AccordionItem>
-      <AccordionItem value="item-3">
-        <AccordionTrigger>
-          <div className="flex items-center">
-            <LayoutDashboard className="ml-4 h-4 w-4" />
-            خرداد
-          </div>
-        </AccordionTrigger>
-        <AccordionContent>
-          <ul className="flex flex-col">
-            <li className="p-2 pr-3 hover:text-foreground-secondary hover:pr-5 duration-200 transition-[padding] font-medium hover:bg-background-secondary rounded-lg cursor-pointer">112340</li>
-            <li className="p-2 pr-3 hover:text-foreground-secondary hover:pr-5 duration-200 transition-[padding] font-medium hover:bg-background-secondary rounded-lg cursor-pointer">112340</li>
-            <li className="p-2 pr-3 hover:text-foreground-secondary hover:pr-5 duration-200 transition-[padding] font-medium hover:bg-background-secondary rounded-lg cursor-pointer">112340</li>
-            <li className="p-2 pr-3 hover:text-foreground-secondary hover:pr-5 duration-200 transition-[padding] font-medium hover:bg-background-secondary rounded-lg cursor-pointer">112340</li>
-            <li className="p-2 pr-3 hover:text-foreground-secondary hover:pr-5 duration-200 transition-[padding] font-medium hover:bg-background-secondary rounded-lg cursor-pointer">112340</li>
-          </ul>
-        </AccordionContent>
-      </AccordionItem>
-      <AccordionItem value="item-4">
-        <AccordionTrigger>
-          <div className="flex items-center">
-            <LayoutDashboard className="ml-4 h-4 w-4" />
-            تیر
-          </div>
-        </AccordionTrigger>
-        <AccordionContent>
-          <ul className="flex flex-col">
-            <li className="p-2 pr-3 hover:text-foreground-secondary hover:pr-5 duration-200 transition-[padding] font-medium hover:bg-background-secondary rounded-lg cursor-pointer">112340</li>
-            <li className="p-2 pr-3 hover:text-foreground-secondary hover:pr-5 duration-200 transition-[padding] font-medium hover:bg-background-secondary rounded-lg cursor-pointer">112340</li>
-            <li className="p-2 pr-3 hover:text-foreground-secondary hover:pr-5 duration-200 transition-[padding] font-medium hover:bg-background-secondary rounded-lg cursor-pointer">112340</li>
-            <li className="p-2 pr-3 hover:text-foreground-secondary hover:pr-5 duration-200 transition-[padding] font-medium hover:bg-background-secondary rounded-lg cursor-pointer">112340</li>
-            <li className="p-2 pr-3 hover:text-foreground-secondary hover:pr-5 duration-200 transition-[padding] font-medium hover:bg-background-secondary rounded-lg cursor-pointer">112340</li>
+            {data?.map((device, key) => (
+              <li
+                key={key}
+                className={styles.item}
+                onClick={() => router.push(`/${device.serial}`)}
+              >
+                {device.serial}
+              </li>
+            ))}
+            {newDevice.show ? (
+              <input
+                autoFocus
+                type="text"
+                placeholder="S/N"
+                className="rounded-lg border bg-transparent p-2 font-medium"
+                value={newDevice.serial}
+                onChange={(e) =>
+                  setNewDevice({ ...newDevice, serial: e.target.value })
+                }
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    onCreateDevice();
+                  }
+                }}
+              />
+            ) : (
+              <button
+                onClick={() => setNewDevice({ ...newDevice, show: true })}
+                className="mt-4 flex items-center justify-center rounded-lg border bg-background-secondary px-2 py-1 duration-150 hover:text-foreground-secondary active:scale-90"
+              >
+                <PlusIcon className="h-4 w-4" />
+              </button>
+            )}
           </ul>
         </AccordionContent>
       </AccordionItem>

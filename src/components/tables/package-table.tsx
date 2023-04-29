@@ -1,59 +1,20 @@
 import styles from "~/styles/table.module.scss";
 import { PlusIcon } from "lucide-react";
-import { create } from "zustand";
-import { useCallback } from "react";
-import { v4 as uuidv4 } from "uuid";
-
-interface PackageProps {
-  id: string;
-  name: string | undefined;
-  receive: string | number;
-  consumed: string | number;
-  returned: string | number;
-}
-
-interface usePackageStoreProps {
-  packages: PackageProps[];
-  onAdd: () => void;
-  onRemove: (id: string) => void;
-  changeHandler: (p: PackageProps) => void;
-}
-
-const usePackageStore = create<usePackageStoreProps>((set, get) => ({
-  packages: [],
-  onAdd: () =>
-    set((state) => ({
-      packages: [
-        ...state.packages,
-        {
-          id: uuidv4(),
-          name: "",
-          receive: "",
-          consumed: "",
-          returned: "",
-        },
-      ],
-    })),
-  onRemove: (id: string) => {
-    const list = get().packages.filter((p) => p.id !== id);
-    return set({ packages: list });
-  },
-  changeHandler: (p) => {
-    const index = get().packages.findIndex((item) => item.id === p.id);
-    if (index > -1) {
-      get().packages[index] = p;
-      set({ packages: [...get().packages] });
-    }
-  },
-}));
+import { useState } from "react";
+import { IPackage, useDeviceStore } from "~/contexts/device";
 
 export default function PackageTable() {
-  const { packages, onAdd } = usePackageStore();
+  const {
+    device: { packages },
+    addPackage,
+  } = useDeviceStore();
+
+  const { device } = useDeviceStore()
 
   return (
     <div className={styles.container}>
       <table className={styles.table}>
-        <thead onClick={() => console.log(packages)}>
+        <thead>
           <tr>
             <th>نام تجهیزات</th>
             <th>دریافتی</th>
@@ -67,16 +28,18 @@ export default function PackageTable() {
           ))}
         </tbody>
       </table>
-      <button onClick={onAdd} className={styles.add}>
+      <button onClick={addPackage} className={styles.add}>
         <PlusIcon className="ml-2 h-4 w-4" />
         افزودن تجهیزات
       </button>
+      <button className={styles.add} onClick={() => console.log(device)}>show</button>
     </div>
   );
 }
 
-function Tr(pg: PackageProps) {
-  const { changeHandler, onRemove } = usePackageStore();
+function Tr(pg: IPackage) {
+  const [consumed, setConsumed] = useState(0);
+  const { changePackageHandler, removePackage } = useDeviceStore();
   const handleChange = (event: React.ChangeEvent<HTMLTableRowElement>) => {
     const target = event.target as HTMLTableRowElement;
     const name = target?.querySelector("[data-name=name]")?.innerHTML;
@@ -86,24 +49,26 @@ function Tr(pg: PackageProps) {
     const returned = parseInt(
       target.querySelector("[data-name=returned]")?.innerHTML ?? "0"
     );
-    const consumed = parseInt(
-      target.querySelector("[data-name=consumed]")?.innerHTML ?? "0"
-    );
-
-    changeHandler({ id: pg.id, name, receive, returned, consumed });
+  
+    if (receive < 0 || returned < 0 || isNaN(receive) || isNaN(returned)) return;
+  
+    setConsumed(receive - returned);
+    changePackageHandler({ id: pg.id, name, receive, returned });
   };
+  
 
   return (
     <tr
       className={styles["row-package"]}
       onBlur={handleChange}
-      onDoubleClick={() => onRemove(pg.id)}
+      onDoubleClick={() => removePackage(pg.id)}
       contentEditable
+      suppressContentEditableWarning={true}
     >
       <td data-name="name">{pg.name}</td>
       <td data-name="receive">{pg.receive}</td>
       <td data-name="returned">{pg.returned}</td>
-      <td data-name="consumed">{pg.consumed}</td>
+      <td data-name="consumed">{consumed}</td>
     </tr>
   );
 }
