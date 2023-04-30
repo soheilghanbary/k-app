@@ -32,7 +32,7 @@ function Item() {
   const utils = api.useContext();
   const [newDevice, setNewDevice] = useState({ show: false, serial: "" });
   const router = useRouter();
-  const { mutateAsync } = api.device.create.useMutation({
+  const { mutate } = api.device.create.useMutation({
     onSuccess(data) {
       setNewDevice({ show: false, serial: "" });
       console.log(data);
@@ -42,9 +42,7 @@ function Item() {
 
   if (isLoading) return <p>loading...</p>;
 
-  async function onCreateDevice() {
-    await mutateAsync({ serial: newDevice.serial });
-  }
+  const onCreateDevice = () => mutate({ serial: newDevice.serial });
 
   return (
     <Accordion

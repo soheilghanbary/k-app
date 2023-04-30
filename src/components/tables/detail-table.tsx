@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { api } from "~/utils/api";
 
-export default function DetailTable() {
+export default function DetailTable(): JSX.Element {
   const router = useRouter();
   const serial_number = router.query.serial as string;
   const { data } = api.device.get.useQuery(serial_number || "");
@@ -35,7 +35,7 @@ export default function DetailTable() {
     }
   },[data])
 
-  if (!data) return
+  if (!data) return <p>صبر کنید</p>
 
   const handleBlur = async () => await mutateAsync({ id: data?.id , ...editableData })
 
