@@ -1,32 +1,58 @@
-import { useDeviceStore } from "~/contexts/device";
 import styles from "~/styles/table.module.scss";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import { api } from "~/utils/api";
 
 export default function DetailTable() {
-  const { device, setDetails, setSerial } = useDeviceStore();
-  const [editableData, setEditableData] = useState(device);
+  const router = useRouter();
+  const serial_number = router.query.serial as string;
+  const { data } = api.device.get.useQuery(serial_number || "");
+  const [editableData, setEditableData] = useState<any>({});
+  const utils = api.useContext()
+  const { mutate: mutateSerialNumber } = api.device.setSerial.useMutation({
+    onSuccess(res) {
+      utils.device.invalidate()
+      router.push(res.serial)
+    }
+  });
+
+  const { mutateAsync } = api.device.update.useMutation({
+    onSuccess(res) {
+      console.log(res)
+    }
+  });
 
   const handleContentChange = (e: any) => {
-    setEditableData((prevState) => ({
+    setEditableData((prevState: any) => ({
       ...prevState,
       [e.target.dataset.key]: e.target.innerText,
     }));
   };
 
-  const handleBlur = () => {
-    setDetails(editableData);
-  };
+  useEffect(() => {
+    if (data !== null && data !== undefined) {
+      setEditableData(data)
+    }
+  },[data])
+
+  if (!data) return
+
+  const handleBlur = async () => await mutateAsync({ id: data?.id , ...editableData })
 
   return (
     <>
       <h1 className="mb-8 text-2xl text-foreground-secondary">
         سریال :{" "}
         <span
-          onInput={(e) => setSerial(e.currentTarget.innerText)}
+          onBlur={(e) => mutateSerialNumber({ id: data.id , serial: e.currentTarget.innerText })}
           contentEditable
+          onKeyDown={e => {
+            e.keyCode === 13 && mutateSerialNumber({ id: data.id , serial: e.currentTarget.innerText })
+            e.keyCode === 13 && e.preventDefault()
+          }}
           suppressContentEditableWarning={true}
         >
-          {device.serial}
+          {data.serial}
         </span>
       </h1>
       <table className={styles.table}>
@@ -48,8 +74,12 @@ export default function DetailTable() {
               suppressContentEditableWarning={true}
               data-key="type"
               onInput={handleContentChange}
+              onKeyDown={e => {
+                e.keyCode === 13 && mutateAsync({ id: data.id , ...editableData })
+                e.keyCode === 13 && e.preventDefault()
+              }}
             >
-              {device.type}
+              {data.type}
             </td>
             <td
               contentEditable
@@ -57,7 +87,7 @@ export default function DetailTable() {
               data-key="date"
               onInput={handleContentChange}
             >
-              {device.date}
+              {data.date}
             </td>
             <td
               contentEditable
@@ -65,7 +95,7 @@ export default function DetailTable() {
               data-key="name"
               onInput={handleContentChange}
             >
-              {device.name}
+              {data.name}
             </td>
             <td
               contentEditable
@@ -73,7 +103,7 @@ export default function DetailTable() {
               data-key="expert"
               onInput={handleContentChange}
             >
-              {device.expert}
+              {data.expert}
             </td>
             <td
               contentEditable
@@ -81,7 +111,7 @@ export default function DetailTable() {
               data-key="seller"
               onInput={handleContentChange}
             >
-              {device.seller}
+              {data.seller}
             </td>
             <td
               contentEditable
@@ -89,7 +119,7 @@ export default function DetailTable() {
               data-key="phone"
               onInput={handleContentChange}
             >
-              {device.phone}
+              {data.phone}
             </td>
             <td
               contentEditable
@@ -97,7 +127,7 @@ export default function DetailTable() {
               data-key="address"
               onInput={handleContentChange}
             >
-              {device.address}
+              {data.address}
             </td>
           </tr>
         </tbody>

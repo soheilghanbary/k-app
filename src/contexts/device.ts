@@ -19,7 +19,7 @@ export interface IPackage {
   returned: string | number;
 }
 
-interface IDevice {
+export interface IDevice {
   device: {
     type: string;
     serial: string;

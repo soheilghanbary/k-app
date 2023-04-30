@@ -8,14 +8,14 @@ datasource db {
 }
 
 model Device {
-  id       String   @id @default(uuid())
-  name     String?  @default("")
-  type     String?  @default("")
+  id       String  @id @default(uuid())
+  name     String? @default("")
+  type     String? @default("")
   serial   String
-  phone    String?  @default("")
-  address  String?  @default("")
-  expert   String?  @default("")
-  seller   String?  @default("")
-  date     DateTime @default(now())
+  phone    String? @default("")
+  address  String? @default("")
+  expert   String? @default("")
+  seller   String? @default("")
+  date     String? @default("")
   packages Json[]
 }
